@@ -2,6 +2,7 @@ package com.aduilio.matchessimulator.activity
 
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import com.aduilio.matchessimulator.databinding.ActivityDetailBinding
 import com.aduilio.matchessimulator.entity.Match
@@ -36,21 +37,31 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun loadMatch() {
-        intent?.extras?.getParcelable<Match>(Constants.MATCH_PARAM)?.apply {
+        intent?.extras?.getParcelable<Match>(Constants.MATCH_PARAM)?.let {
+            setDetails(it)
+        }
+    }
+
+    private fun setDetails(match: Match) {
+        match.apply {
             supportActionBar?.title = stadium.name
-            Glide.with(this@DetailActivity).load(stadium.image).into(binding.ivStadium)
+            setImage(stadium.image, binding.ivStadium)
 
             binding.tvDescription.text = description
 
             binding.tvHomeTeamName.text = homeTeam.name
             binding.tvHomeTeamScore.text = homeTeam.score?.toString()
             binding.rbHomeTeamStars.rating = homeTeam.strength.toFloat()
-            Glide.with(this@DetailActivity).load(homeTeam.image).into(binding.ivHomeTeam)
+            setImage(homeTeam.image, binding.ivHomeTeam)
 
             binding.tvAwayTeamName.text = awayTeam.name
             binding.tvAwayTeamScore.text = awayTeam.score?.toString()
             binding.rbAwayTeamStars.rating = awayTeam.strength.toFloat()
-            Glide.with(this@DetailActivity).load(awayTeam.image).into(binding.ivAwayTeam)
+            setImage(awayTeam.image, binding.ivAwayTeam)
         }
+    }
+
+    private fun setImage(url: String, imageView: ImageView) {
+        Glide.with(this@DetailActivity).load(url).into(imageView)
     }
 }

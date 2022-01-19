@@ -19,6 +19,10 @@ import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
+    object Constants {
+        const val SERVER_URL = "https://aduilio.github.io/matches-simulator-api/"
+    }
+
     private lateinit var binding: ActivityMainBinding
     private lateinit var matchesApi: MatchesApi
     private lateinit var matchesAdapter: MatchesAdapter
@@ -49,7 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupHttpClient() {
         val retrofit = Retrofit.Builder()
-            .baseUrl("https://aduilio.github.io/matches-simulator-api/")
+            .baseUrl(Constants.SERVER_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -61,14 +65,7 @@ class MainActivity : AppCompatActivity() {
         matchesApi.getMatches().enqueue(object : Callback<List<Match>> {
             override fun onResponse(call: Call<List<Match>>, response: Response<List<Match>>) {
                 binding.srlMatches.isRefreshing = false
-
-                if (response.isSuccessful) {
-                    response.body()?.let {
-                        matchesAdapter.setMatches(it)
-                    }
-                } else {
-                    showErrorMessage()
-                }
+                handleResponse(response)
             }
 
             override fun onFailure(call: Call<List<Match>>, t: Throwable) {
@@ -76,6 +73,16 @@ class MainActivity : AppCompatActivity() {
                 showErrorMessage()
             }
         })
+    }
+
+    private fun handleResponse(response: Response<List<Match>>) {
+        if (response.isSuccessful) {
+            response.body()?.let {
+                matchesAdapter.setMatches(it)
+            }
+        } else {
+            showErrorMessage()
+        }
     }
 
     private fun showErrorMessage() {

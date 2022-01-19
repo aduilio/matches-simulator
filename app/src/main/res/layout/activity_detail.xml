@@ -29,6 +29,13 @@
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop" />
 
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#4000"
+                android:fitsSystemWindows="true"
+                android:scaleType="centerCrop" />
+
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
                 style="@style/Widget.MaterialComponents.Toolbar.Primary"

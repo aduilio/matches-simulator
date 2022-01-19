@@ -10,7 +10,6 @@ import com.aduilio.matchessimulator.databinding.MatchItemBinding
 import com.aduilio.matchessimulator.entity.Match
 import com.bumptech.glide.Glide
 
-
 class MatchesAdapter : RecyclerView.Adapter<MatchesAdapter.MatchesViewHolder>() {
 
     private val matches: MutableList<Match> = mutableListOf()
