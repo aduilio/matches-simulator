@@ -1,5 +1,6 @@
-package com.aduilio.matchessimulator
+package com.aduilio.matchessimulator.activity
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.aduilio.matchessimulator.databinding.ActivityMainBinding
@@ -14,6 +15,6 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
-        binding.tvMain.setText(R.string.app_name)
+        startActivity(Intent(this, DetailActivity::class.java))
     }
 }
