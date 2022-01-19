@@ -34,6 +34,7 @@
         android:contentDescription="@string/simulate_description"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/ic_simulate" />
+        app:srcCompat="@drawable/ic_simulate"
+        app:tint="@color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
