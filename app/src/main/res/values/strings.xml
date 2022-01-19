@@ -4,4 +4,5 @@
     <string name="home_team_image">Home team image</string>
     <string name="versus">x</string>
     <string name="away_team_image">Away team image</string>
+    <string name="fail_get_matches">Fail get matches</string>
 </resources>
