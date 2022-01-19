@@ -33,8 +33,32 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
+        getMatches()
+    }
+
+    private fun setupComponents() {
+        matchesAdapter = MatchesAdapter()
+        binding.rvMatches.setHasFixedSize(true)
+        binding.rvMatches.adapter = matchesAdapter
+
+        binding.srlMatches.setOnRefreshListener { getMatches() }
+    }
+
+    private fun setupHttpClient() {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://aduilio.github.io/matches-simulator-api/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        matchesApi = retrofit.create(MatchesApi::class.java)
+    }
+
+    private fun getMatches() {
+        binding.srlMatches.isRefreshing = true
         matchesApi.getMatches().enqueue(object : Callback<List<Match>> {
             override fun onResponse(call: Call<List<Match>>, response: Response<List<Match>>) {
+                binding.srlMatches.isRefreshing = false
+
                 if (response.isSuccessful) {
                     response.body()?.let {
                         matchesAdapter.setMatches(it)
@@ -45,24 +69,10 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<List<Match>>, t: Throwable) {
+                binding.srlMatches.isRefreshing = false
                 showErrorMessage()
             }
         })
-    }
-
-    private fun setupComponents() {
-        matchesAdapter = MatchesAdapter()
-        binding.rvMatches.setHasFixedSize(true)
-        binding.rvMatches.adapter = matchesAdapter
-    }
-
-    private fun setupHttpClient() {
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://aduilio.github.io/matches-simulator-api/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-
-        matchesApi = retrofit.create(MatchesApi::class.java)
     }
 
     private fun showErrorMessage() {

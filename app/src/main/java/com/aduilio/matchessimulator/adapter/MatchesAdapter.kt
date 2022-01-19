@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.aduilio.matchessimulator.databinding.MatchItemBinding
 import com.aduilio.matchessimulator.entity.Match
+import com.bumptech.glide.Glide
 
 class MatchesAdapter : RecyclerView.Adapter<MatchesAdapter.MatchesViewHolder>() {
 
@@ -19,7 +20,10 @@ class MatchesAdapter : RecyclerView.Adapter<MatchesAdapter.MatchesViewHolder>() 
     override fun onBindViewHolder(holder: MatchesViewHolder, position: Int) {
         matches[position].apply {
             holder.binding.tvHomeTeamName.text = homeTeam.name
+            Glide.with(holder.itemView.context).load(homeTeam.image).into(holder.binding.ivHomeTeam)
+
             holder.binding.tvAwayTeamName.text = awayTeam.name
+            Glide.with(holder.itemView.context).load(awayTeam.image).into(holder.binding.ivAwayTeam)
         }
     }
 
