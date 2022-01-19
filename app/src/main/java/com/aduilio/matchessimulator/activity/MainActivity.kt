@@ -3,6 +3,7 @@ package com.aduilio.matchessimulator.activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.aduilio.matchessimulator.R
+import com.aduilio.matchessimulator.adapter.MatchesAdapter
 import com.aduilio.matchessimulator.api.MatchesApi
 import com.aduilio.matchessimulator.databinding.ActivityMainBinding
 import com.aduilio.matchessimulator.entity.Match
@@ -17,6 +18,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var matchesApi: MatchesApi
+    private lateinit var matchesAdapter: MatchesAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +26,7 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(binding.root)
 
+        setupComponents()
         setupHttpClient()
     }
 
@@ -33,11 +36,9 @@ class MainActivity : AppCompatActivity() {
         matchesApi.getMatches().enqueue(object : Callback<List<Match>> {
             override fun onResponse(call: Call<List<Match>>, response: Response<List<Match>>) {
                 if (response.isSuccessful) {
-                    Snackbar.make(
-                        binding.root,
-                        response?.body()?.get(0)?.description!!,
-                        Snackbar.LENGTH_SHORT
-                    ).show()
+                    response.body()?.let {
+                        matchesAdapter.setMatches(it)
+                    }
                 } else {
                     showErrorMessage()
                 }
@@ -47,6 +48,12 @@ class MainActivity : AppCompatActivity() {
                 showErrorMessage()
             }
         })
+    }
+
+    private fun setupComponents() {
+        matchesAdapter = MatchesAdapter()
+        binding.rvMatches.setHasFixedSize(true)
+        binding.rvMatches.adapter = matchesAdapter
     }
 
     private fun setupHttpClient() {
