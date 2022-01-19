@@ -31,11 +31,6 @@ class MainActivity : AppCompatActivity() {
 
         setupComponents()
         setupHttpClient()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
         getMatches()
     }
 

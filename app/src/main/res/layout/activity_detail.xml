@@ -23,7 +23,7 @@
             app:expandedTitleTextAppearance="@style/TextAppearance.App.CollapsingToolbar.Expanded">
 
             <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/ivPlace"
+                android:id="@+id/ivStadium"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
