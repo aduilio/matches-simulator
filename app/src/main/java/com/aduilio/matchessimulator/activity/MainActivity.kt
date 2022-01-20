@@ -2,30 +2,23 @@ package com.aduilio.matchessimulator.activity
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.aduilio.matchessimulator.R
 import com.aduilio.matchessimulator.adapter.MatchesAdapter
-import com.aduilio.matchessimulator.api.MatchesApi
 import com.aduilio.matchessimulator.databinding.ActivityMainBinding
 import com.aduilio.matchessimulator.entity.Match
 import com.aduilio.matchessimulator.entity.Team
+import com.aduilio.matchessimulator.viewmodel.MatchesViewModel
 import com.google.android.material.snackbar.Snackbar
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
 
-    object Constants {
-        const val SERVER_URL = "https://aduilio.github.io/matches-simulator-api/"
-    }
-
     private lateinit var binding: ActivityMainBinding
-    private lateinit var matchesApi: MatchesApi
     private lateinit var matchesAdapter: MatchesAdapter
+
+    private val matchesViewModel: MatchesViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupComponents()
-        setupHttpClient()
+        setupViewModel()
         getMatches()
     }
 
@@ -51,43 +44,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupHttpClient() {
-        val retrofit = Retrofit.Builder()
-            .baseUrl(Constants.SERVER_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+    private fun setupViewModel() {
+        matchesViewModel.matches.observe(this, {
+            matchesAdapter.setMatches(it)
+        })
 
-        matchesApi = retrofit.create(MatchesApi::class.java)
-    }
+        matchesViewModel.showProgress.observe(this, {
+            binding.srlMatches.isRefreshing = it
+        })
 
-    private fun getMatches() {
-        binding.srlMatches.isRefreshing = true
-        matchesApi.getMatches().enqueue(object : Callback<List<Match>> {
-            override fun onResponse(call: Call<List<Match>>, response: Response<List<Match>>) {
-                binding.srlMatches.isRefreshing = false
-                handleResponse(response)
-            }
-
-            override fun onFailure(call: Call<List<Match>>, t: Throwable) {
-                binding.srlMatches.isRefreshing = false
-                showErrorMessage()
-            }
+        matchesViewModel.resultSuccess.observe(this, {
+            showErrorMessage(it)
         })
     }
 
-    private fun handleResponse(response: Response<List<Match>>) {
-        if (response.isSuccessful) {
-            response.body()?.let {
-                matchesAdapter.setMatches(it)
-            }
-        } else {
-            showErrorMessage()
-        }
+    private fun getMatches() {
+        matchesViewModel.get()
     }
 
-    private fun showErrorMessage() {
-        Snackbar.make(binding.root, R.string.fail_get_matches, Snackbar.LENGTH_SHORT)
-            .show()
+    private fun showErrorMessage(success: Boolean) {
+        if (!success) {
+            Snackbar.make(binding.root, R.string.fail_get_matches, Snackbar.LENGTH_SHORT)
+                .show()
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
